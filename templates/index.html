@@ -1,0 +1,38 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio to Text Converter</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>MP3 to Text Converter</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="file">Choose MP3 file:</label>
+            <input type="file" id="file" name="file" accept=".mp3" required>
+            <button type="submit">Convert to Text</button>
+        </form>
+        <textarea id="result" rows="10" placeholder="Transcribed text will appear here..." readonly></textarea>
+    </div>
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append("file", document.getElementById("file").files[0]);
+
+            try {
+                const response = await fetch("/", { method: "POST", body: formData });
+                const data = await response.json();
+                document.getElementById("result").value = data.transcription || data.error;
+            } catch (error) {
+                document.getElementById("result").value = "An error occurred.";
+            }
+        });
+    </script>
+</body>
+</html>
